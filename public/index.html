@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tab Creator</title>
+<meta name="description" content="Write guitar tabs by clicking and typing, then copy them out as plain text.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script src="js/theme.js"></script>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="bar" id="topBar">
+  <div class="brand">Tab<span>Creator</span></div>
+  <button id="btnUndo" title="Undo (Ctrl+Z)">Undo</button>
+  <button id="btnRedo" title="Redo (Ctrl+Y)">Redo</button>
+  <div class="sep"></div>
+  <button id="btnPlay" title="Play this staff and everything after it, or just the selection if there is one (Ctrl+P). Shift+click starts at the cursor.">▶ Play</button>
+  <label class="lab" for="rngSpeed" title="How fast the columns go by">Speed</label>
+  <input type="range" id="rngSpeed" min="3" max="16" step="1" title="How fast the columns go by">
+  <label title="Hear each note as you type it or stamp a chord"><input type="checkbox" id="chkTypeSound"> sound as I type</label>
+  <div class="grow"></div>
+  <button id="btnNew" title="Start an empty tab (Undo brings the old one back)">New</button>
+  <button id="btnImport" title="Paste an existing text tab and keep editing it">Import tab…</button>
+  <button id="btnCopyMd" title="Copy wrapped in a ``` code block, for Obsidian / markdown">Copy for Obsidian</button>
+  <button id="btnCopy" class="primary" title="Copy plain text, ready to paste into Ultimate Guitar">Copy tab</button>
+  <button id="btnTheme"></button>
+</div>
+
+<div class="bar" id="techBar"></div>
+
+<div class="bar" id="staffBar">
+  <span class="lab">Staff</span>
+  <select id="selPreset" title="Tuning / instrument presets"></select>
+  <input type="text" id="inpLabels" title="String labels, top line to bottom line, separated by spaces. The number of labels sets the number of strings." spellcheck="false">
+  <label title="Show e| B| G| … or bare | lines"><input type="checkbox" id="chkLabels"> labels</label>
+  <span class="lab gap">Width</span>
+  <input type="number" id="inpWidth" min="4" max="300" title="Number of columns in this staff">
+  <button id="btnAll" title="Use this staff's strings and label setting on every staff in the tab">Apply tuning to all</button>
+</div>
+
+<main>
+  <div id="edwrap"><div id="editor"></div></div>
+  <aside>
+    <section>
+      <h3>Chord stamp</h3>
+      <div class="rowf">
+        <select id="chRoot"></select>
+        <select id="chQual"></select>
+      </div>
+      <div id="voicings"></div>
+      <label><input type="checkbox" id="chkName" checked> write the chord name on the line above</label>
+      <div class="rowf top">
+        <input type="text" id="chCustom" placeholder="custom: x32010 or 8 10 10 9 8 8" spellcheck="false" title="Any shape, lowest string first. Use spaces when a fret has two digits.">
+        <button id="btnCustom">Stamp</button>
+      </div>
+      <p class="hint">Click a column on a staff, then click a shape. It lands there and the cursor steps right, so you can stamp again.</p>
+    </section>
+
+    <details open>
+      <summary>Keys</summary>
+      <ul class="keys">
+        <li><b>Click + type</b><span>Put a fret or symbol in that cell. Nothing else moves.</span></li>
+        <li><b>Enter</b><span>Next string down, same column (Shift = up). For stacking chords.</span></li>
+        <li><b>Tab</b><span>Jump to the next note column, leaving one dash.</span></li>
+        <li><b>Space</b><span>Blank the cell and step right.</span></li>
+        <li><b>Shift+arrows / drag</b><span>Select a region. Ctrl+C / X / V work on it.</span></li>
+        <li><b>Ctrl+D</b><span>Repeat the selection to the right.</span></li>
+        <li><b>Ctrl+Space</b><span>Insert a column (also Insert key).</span></li>
+        <li><b>Ctrl+Backspace</b><span>Remove a column (Ctrl+Delete removes forward).</span></li>
+        <li><b>…with Shift</b><span>Insert / remove on the current string only.</span></li>
+        <li><b>Ctrl+B</b><span>Bar line down all strings.</span></li>
+        <li><b>Ctrl+Enter</b><span>New staff below.</span></li>
+        <li><b>End</b><span>Jump past the last note on the string.</span></li>
+        <li><b>Ctrl+P</b><span>Play / stop. Plays the selection if there is one.</span></li>
+      </ul>
+    </details>
+
+    <details open>
+      <summary>Output</summary>
+      <pre id="out"></pre>
+    </details>
+  </aside>
+</main>
+
+<dialog id="dlgImport">
+  <h2>Import a text tab</h2>
+  <div class="hint flush">Paste a tab below. Staff lines become editable staffs; a line sitting directly on top of a staff becomes its text line; everything else becomes text.</div>
+  <textarea id="impText" spellcheck="false" placeholder="e|-----------------|&#10;B|-----------------|&#10;…"></textarea>
+  <div class="rowf end">
+    <button id="impCancel">Cancel</button>
+    <button id="impAppend">Add to the end</button>
+    <button id="impReplace" class="primary">Replace current tab</button>
+  </div>
+</dialog>
+<div id="toast"></div>
+
+<!-- plain scripts, not modules, so the page also works when opened straight from disk -->
+<script src="js/core.js"></script>
+<script src="js/chords.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

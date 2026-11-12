@@ -1,0 +1,13 @@
+services:
+  tab-creator:
+    #build: .
+    image: tab-creator:latest
+    container_name: tab-creator
+    restart: unless-stopped
+    ports:
+      - "8085:80"
+
+networks:
+  shared:
+    external: true
+

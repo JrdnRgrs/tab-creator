@@ -1,0 +1,9 @@
+{
+  "name": "tab-creator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Write guitar tabs by clicking and typing, then copy them out as plain text.",
+  "scripts": {
+    "test": "node --test"
+  }
+}

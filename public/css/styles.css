@@ -1,0 +1,163 @@
+/* ---------- theme ----------
+   Light is the base. Dark applies when the system asks for it, unless the user picked a theme
+   with the switch (theme.js / app.js set data-theme on <html>). */
+:root {
+  color-scheme: light;
+  --bg: #efece6; --paper: #fffdf9; --ink: #22201c; --muted: #7a746a; --dash: #b3ab9c;
+  --line: #ddd7cb; --accent: #c2410c; --accent-soft: rgba(194, 65, 12, .2);
+  --sel: rgba(37, 99, 235, .15); --selb: rgba(37, 99, 235, .55); --play: rgba(22, 163, 74, .3);
+  --panel: #f7f5f0; --btn: #ffffff; --btn-hover: #f1ede5; --textrow: rgba(0, 0, 0, .04);
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #141518; --paper: #1c1e22; --ink: #e9e6df; --muted: #9a968c; --dash: #5c606a;
+  --line: #2f323a; --accent: #fb923c; --accent-soft: rgba(251, 146, 60, .28);
+  --sel: rgba(96, 165, 250, .2); --selb: rgba(96, 165, 250, .65); --play: rgba(74, 222, 128, .3);
+  --panel: #191b1f; --btn: #25282e; --btn-hover: #2f333a; --textrow: rgba(255, 255, 255, .045);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #141518; --paper: #1c1e22; --ink: #e9e6df; --muted: #9a968c; --dash: #5c606a;
+    --line: #2f323a; --accent: #fb923c; --accent-soft: rgba(251, 146, 60, .28);
+    --sel: rgba(96, 165, 250, .2); --selb: rgba(96, 165, 250, .65); --play: rgba(74, 222, 128, .3);
+    --panel: #191b1f; --btn: #25282e; --btn-hover: #2f333a; --textrow: rgba(255, 255, 255, .045);
+  }
+}
+
+/* ---------- base ---------- */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 13px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+  display: flex; flex-direction: column;
+}
+/* everything that has to line up column by column uses this; .row height in app.js (LH) must match */
+.mono { font: 15px/22px "Cascadia Mono", Consolas, "DejaVu Sans Mono", Menlo, monospace; }
+button, select, input, textarea { font: inherit; color: inherit; }
+button {
+  background: var(--btn); border: 1px solid var(--line); border-radius: 6px;
+  padding: 4px 9px; cursor: pointer; white-space: nowrap;
+}
+button:hover:not(:disabled) { background: var(--btn-hover); }
+button:disabled { opacity: .45; cursor: default; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+button.primary:hover:not(:disabled) { filter: brightness(1.08); background: var(--accent); }
+select, input[type=text], input[type=number] {
+  background: var(--btn); border: 1px solid var(--line); border-radius: 6px; padding: 4px 7px;
+}
+input[type=range] { accent-color: var(--accent); }
+
+/* ---------- top bars ---------- */
+.bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 7px 14px; border-bottom: 1px solid var(--line); background: var(--panel); }
+.bar .grow { flex: 1; }
+.bar label { display: inline-flex; align-items: center; gap: 4px; }
+.brand { font-weight: 700; font-size: 15px; letter-spacing: .01em; margin-right: 8px; }
+.brand span { color: var(--accent); }
+.sep { width: 1px; align-self: stretch; background: var(--line); margin: 2px 4px; }
+.lab { color: var(--muted); font-size: 12px; margin-right: 2px; }
+.lab.gap { margin-left: 8px; }
+#btnPlay { min-width: 70px; }
+#rngSpeed { width: 90px; }
+#techBar button { min-width: 30px; padding: 3px 7px; }
+#techBar button.k { font: 14px/20px "Cascadia Mono", Consolas, Menlo, monospace; }
+#inpLabels { width: 170px; font-family: "Cascadia Mono", Consolas, Menlo, monospace; }
+#inpWidth { width: 62px; }
+
+/* ---------- layout ---------- */
+main { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 330px; }
+#edwrap { overflow: auto; padding: 22px; }
+#editor {
+  background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
+  padding: 26px 30px 30px 46px; min-width: fit-content; min-height: 100%;
+}
+aside { overflow: auto; border-left: 1px solid var(--line); background: var(--panel); padding: 14px; }
+@media (max-width: 1050px) {
+  body { height: auto; }
+  main { display: block; }
+  aside { border-left: 0; border-top: 1px solid var(--line); }
+}
+
+/* ---------- blocks ---------- */
+.block { position: relative; border-left: 2px solid transparent; margin-left: -14px; padding-left: 12px; }
+.block.active { border-left-color: var(--accent); }
+.bctl {
+  position: absolute; left: 190px; top: -21px; z-index: 5; display: flex; gap: 4px;
+  opacity: 0; pointer-events: none; transition: opacity .12s;
+}
+.bctl button { font-size: 11px; padding: 2px 7px; }
+.block:hover > .bctl, .block:focus-within > .bctl { opacity: 1; pointer-events: auto; }
+.block.text textarea {
+  display: block; width: 100%; min-width: 60ch; border: 0; outline: 0; resize: none; overflow: hidden;
+  background: transparent; padding: 0; margin: 0; color: var(--ink); white-space: pre;
+}
+.block.text textarea::placeholder { color: var(--dash); }
+.block.text:hover textarea, .block.text textarea:focus { background: var(--textrow); }
+
+/* ---------- the staff grid ----------
+   Rows are plain text; the cursor, selection, hover cell and playhead are boxes laid under it. */
+.grid { position: relative; outline: none; cursor: text; user-select: none; -webkit-user-select: none; }
+.rows { position: relative; z-index: 2; pointer-events: none; }
+.row { height: 22px; white-space: pre; }
+.row .d { color: var(--dash); }
+.row .cap { color: var(--muted); }
+.row .lbl { color: var(--accent); }
+.row.s { font-weight: 600; }
+.row.s .d, .row.s .cap, .row.s .lbl { font-weight: 400; }
+.block:hover .row.t, .block.active .row.t { background: var(--textrow); }
+.block:hover .row.t.empty::before, .block.active .row.t.empty::before { content: attr(data-ph); color: var(--dash); font-style: italic; }
+.cur, .guide, .selbox, .hov, .playhead { position: absolute; z-index: 1; display: none; pointer-events: none; }
+.hov { background: var(--textrow); outline: 1px solid var(--line); }
+.grid.has .cur { display: block; outline: 1.5px solid var(--accent); border-radius: 2px; }
+.grid.has:focus .cur { background: var(--accent-soft); }
+.grid.has.g .guide { display: block; background: var(--textrow); }
+.selbox { background: var(--sel); outline: 1px solid var(--selb); }
+.playhead { background: var(--play); }
+.rowx {
+  position: absolute; left: -26px; width: 20px; height: 20px; margin-top: 1px; padding: 0; z-index: 3;
+  font-size: 12px; line-height: 1; color: var(--muted); opacity: 0;
+}
+.block:hover .rowx { opacity: 1; }
+
+.ins { height: 22px; position: relative; display: flex; align-items: center; gap: 6px; }
+.ins button { font-size: 11px; padding: 1px 8px; opacity: 0; transition: opacity .12s; }
+.ins:hover button { opacity: 1; }
+.ins.end { height: auto; margin-top: 18px; }
+.ins.end button { opacity: 1; font-size: 13px; padding: 5px 12px; }
+
+/* ---------- sidebar ---------- */
+aside h3 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+aside section, aside details { margin-bottom: 18px; }
+aside summary { cursor: pointer; font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 8px; }
+.rowf { display: flex; gap: 6px; margin-bottom: 8px; }
+.rowf.top { margin-top: 10px; }
+.rowf.end { justify-content: flex-end; margin: 0; }
+.rowf > * { min-width: 0; }
+.rowf select, .rowf input[type=text] { flex: 1; }
+#voicings { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.voi { padding: 6px 8px; text-align: left; }
+.voi pre { margin: 0; font: 12px/14px "Cascadia Mono", Consolas, Menlo, monospace; }
+.voi small { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
+.hint { color: var(--muted); font-size: 12px; margin: 6px 0 0; }
+.hint.flush { margin: 0; }
+.keys { margin: 0; padding: 0; list-style: none; font-size: 12px; }
+.keys li { display: flex; gap: 8px; padding: 3px 0; border-bottom: 1px dashed var(--line); }
+.keys b { flex: 0 0 118px; font-weight: 600; }
+#out {
+  margin: 0; padding: 10px; background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
+  font: 10.5px/13px "Cascadia Mono", Consolas, Menlo, monospace; overflow: auto; max-height: 50vh; white-space: pre;
+}
+
+/* ---------- dialog + toast ---------- */
+dialog { border: 1px solid var(--line); border-radius: 12px; background: var(--paper); color: var(--ink); padding: 18px; width: min(820px, 92vw); }
+dialog::backdrop { background: rgba(0, 0, 0, .45); }
+dialog h2 { margin: 0 0 6px; font-size: 16px; }
+dialog textarea { width: 100%; height: 46vh; margin: 10px 0; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); white-space: pre; font: 13px/17px "Cascadia Mono", Consolas, Menlo, monospace; }
+#toast {
+  position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(20px); opacity: 0;
+  background: var(--ink); color: var(--paper); padding: 8px 14px; border-radius: 8px; pointer-events: none;
+  transition: all .18s; z-index: 50; max-width: 80vw;
+}
+#toast.show { opacity: 1; transform: translateX(-50%); }
+.probe { position: absolute; visibility: hidden; white-space: pre; left: -9999px; top: 0; }
