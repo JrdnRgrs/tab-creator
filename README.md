@@ -21,6 +21,13 @@ no backend. Your tab is saved in the browser you're using and never leaves it.
 
 **Just open it.** Double-click `public/index.html`. That's all it needs.
 
+**Or run the Docker image.** Every push to `main` builds an image (amd64, arm64 and arm/v7) and
+pushes it to this repository's container registry:
+
+```bash
+docker run -d -p 8085:80 ghcr.io/jrdnrgrs/tab-creator:latest
+```
+
 
 ## Using it
 
