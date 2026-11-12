@@ -21,57 +21,6 @@ no backend. Your tab is saved in the browser you're using and never leaves it.
 
 **Just open it.** Double-click `public/index.html`. That's all it needs.
 
-**Or serve it locally**, which behaves the same but gives it a normal `http://` address:
-
-```bash
-python -m http.server 8765 --directory public
-```
-
-Then open <http://localhost:8765>.
-
-**Or run it in Docker** (see below) to have it always available on a home server.
-
-## Deploying with Docker
-
-The image is nginx serving the `public/` folder. It builds as is on a Raspberry Pi (arm64 or
-32-bit) and on a normal PC.
-
-```bash
-docker compose up -d --build
-```
-
-Then open `http://<host>:8085`. Change the port on the left side of `ports` in
-`docker-compose.yml` if 8085 is taken. After pulling a newer version, run the same command again.
-
-### Portainer
-
-The compose file builds the image from this folder, so Portainer needs the folder, not only the
-compose text. Either:
-
-- **Stack from a Git repository** (Stacks → Add stack → Repository): point it at this repo and set
-  the compose path to `docker-compose.yml`. Portainer clones the repo and builds on the Pi.
-- **Or build on the Pi yourself**: copy or clone this folder onto the Pi, run
-  `docker compose up -d --build` in it, and the container then shows up in Portainer.
-
-Pasting `docker-compose.yml` on its own into Portainer's web editor will not work, because there
-is nothing there for `build: .` to build from.
-
-### Cloudflare Tunnel
-
-Point the tunnel's public hostname at the container:
-
-- If `cloudflared` runs in Docker, put both containers on the same network (there is a commented
-  block for this in `docker-compose.yml`) and use `http://tab-creator:80` as the service.
-- If `cloudflared` runs on the host, use `http://localhost:8085`.
-
-Things to know before putting it on the internet:
-
-- There is no login. Anyone with the address can use the editor. They cannot see your tabs,
-  because tabs are stored in each visitor's own browser, not on the server. If you'd rather keep
-  it to yourself, put a Cloudflare Access policy in front of the hostname.
-- Tabs are saved per browser and per address. A tab written at `http://pi:8085` will not appear
-  at `https://tabs.example.com` or on your phone. Use **Copy tab** to move one, and **Import tab…**
-  to bring it back in.
 
 ## Using it
 
