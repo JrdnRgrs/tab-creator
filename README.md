@@ -4,6 +4,8 @@ Write guitar tabs by clicking a spot on the staff and typing, instead of hand-ed
 text box. When you're done, copy the result as plain text and paste it into Ultimate Guitar, or as
 a markdown code block for Obsidian.
 
+**Try it live: <https://tab-creator-two.vercel.app>**
+
 ```
 Intro
 e|--------------------------------------------------------------------------|
@@ -19,7 +21,10 @@ no backend. Your tab is saved in the browser you're using and never leaves it.
 
 ## Running it
 
-**Just open it.** Double-click `public/index.html`. That's all it needs.
+**Use the hosted copy** at <https://tab-creator-two.vercel.app>. Nothing to install; your tab is
+saved in your own browser.
+
+**Or just open it.** Download the repo and double-click `public/index.html`. That's all it needs.
 
 **Or run the Docker image.** Every push to `main` builds an image (amd64, arm64 and arm/v7) and
 pushes it to this repository's container registry:

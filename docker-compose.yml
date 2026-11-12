@@ -1,13 +1,11 @@
 services:
   tab-creator:
-    #build: .
-    image: tab-creator:latest
+    image: ghcr.io/jrdnrgrs/tab-creator:latest
     container_name: tab-creator
     restart: unless-stopped
     ports:
-      - "8085:80"
+      - "80:80"
 
-networks:
-  shared:
-    external: true
-
+# networks:
+#   shared:
+#     external: true
